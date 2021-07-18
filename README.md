@@ -44,18 +44,18 @@ This means that app will only be available for users that run Android SDK 20 or 
 
 2. Specify your API key in the application manifest `android/app/src/main/AndroidManifest.xml`:
 
-xml
+```xml
 <manifest ...
   <application ...
     <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="YOUR KEY HERE"/>
-
+```
 
 ### iOS
 
 Specify your API key in the application delegate `ios/Runner/AppDelegate.m`:
 
-objectivec
+```objectivec
 #include "AppDelegate.h"
 #include "GeneratedPluginRegistrant.h"
 #import "GoogleMaps/GoogleMaps.h"
@@ -69,11 +69,12 @@ objectivec
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 @end
+```
 
 
 Or in your swift code, specify your API key in the application delegate `ios/Runner/AppDelegate.swift`:
 
-swift
+```swift
 import UIKit
 import Flutter
 import GoogleMaps
@@ -89,6 +90,8 @@ import GoogleMaps
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
+```
+
 
 ### Sample Usage
 
