@@ -1,0 +1,24 @@
+name: map_address_picker
+description: A simple flutter plugin for picking users location using google maps.
+version: 0.0.1
+homepage: https://github.com/athul-ain/map_address_picker
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  google_maps_flutter: ^2.0.6
+  geolocator: ^7.3.0
+  google_maps_flutter_platform_interface: ^2.1.0
+  geolocator_platform_interface: ^2.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+# The following section is specific to Flutter.
+flutter:
