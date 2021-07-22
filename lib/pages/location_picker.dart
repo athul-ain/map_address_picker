@@ -40,36 +40,39 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
 
   // this also checks for location permission.
   Future<void> _initCurrentLocation() async {
+    await _checkGeolocationPermission();
     Position? currentPosition;
     try {
       currentPosition = await Geolocator.getCurrentPosition(
         desiredAccuracy: widget.desiredAccuracy,
       );
-
-      //setState(() => _currentPosition = currentPosition);
     } catch (e) {
       currentPosition = null;
       print(e);
     }
 
-    if (!mounted) return;
+    if (mounted && currentPosition != null)
+      setState(() => _currentPosition = currentPosition);
+    if (currentPosition != null || _currentPosition != null) {
+      setState(() {
+        _markers.add(Marker(
+          markerId: MarkerId("defaultMarker"),
+          position: currentPosition == null
+              ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
+              : LatLng(currentPosition.latitude, currentPosition.longitude),
+        ));
+      });
+    }
 
-    setState(() => _currentPosition = currentPosition);
-
-    if (currentPosition != null)
-      moveToCurrentLocation(
-          LatLng(currentPosition.latitude, currentPosition.longitude));
+    if (_currentPosition != null)
+      await moveToCurrentLocation(
+          LatLng(_currentPosition!.latitude, _currentPosition!.longitude));
   }
 
   Future moveToCurrentLocation(LatLng currentLocation) async {
     final controller = await mapController.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: currentLocation, zoom: widget.initialZoom),
-    ));
-
-    _markers.add(Marker(
-      markerId: MarkerId("123"),
-      position: currentLocation,
     ));
   }
 
@@ -107,40 +110,6 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
               ),
             ),
         title: Text(widget.title ?? ""),
-        actions: [
-          if (widget.layersButtonEnabled)
-            SizedBox(
-              height: 50,
-              width: 50,
-              child: Center(
-                child: Opacity(
-                  opacity: 0.8,
-                  child: Card(
-                    elevation: 2,
-                    clipBehavior: Clip.antiAlias,
-                    color: Colors.white,
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          if (selectedMapType == MapType.normal) {
-                            selectedMapType = MapType.hybrid;
-                          } else {
-                            selectedMapType = MapType.normal;
-                          }
-                        });
-                      },
-                      child: SizedBox(
-                        width: 38,
-                        height: 38,
-                        child: Icon(Icons.layers, color: Colors.grey[800]),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          SizedBox(width: 7)
-        ],
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -155,7 +124,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
               mapController.complete(controller);
 
               _markers.add(Marker(
-                markerId: MarkerId("123"),
+                markerId: MarkerId("defaultMarker"),
                 position: widget.initialCenter,
               ));
 
@@ -165,7 +134,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
             onTap: (argument) {
               setState(() {
                 _markers.add(Marker(
-                  markerId: MarkerId("123"),
+                  markerId: MarkerId("defaultMarker"),
                   position: argument,
                 ));
               });
@@ -173,7 +142,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
             onLongPress: (argument) {
               setState(() {
                 _markers.add(Marker(
-                  markerId: MarkerId("123"),
+                  markerId: MarkerId("defaultMarker"),
                   position: argument,
                 ));
               });
@@ -182,10 +151,41 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
               print("onCameraIdle#_lastMapPosition = $_lastMapPosition");
             },
             myLocationEnabled: true,
-            myLocationButtonEnabled: true,
+            myLocationButtonEnabled: false,
             padding: EdgeInsets.only(
-              top: widget.layersButtonEnabled ? 70 : 30,
-              bottom: 150,
+              bottom: kBottomNavigationBarHeight + 30,
+            ),
+          ),
+          Container(
+            alignment: Alignment.topRight,
+            margin: const EdgeInsets.only(top: kToolbarHeight + 30, right: 8),
+            child: Column(
+              children: [
+                if (widget.layersButtonEnabled)
+                  FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        if (selectedMapType == MapType.normal) {
+                          selectedMapType = MapType.hybrid;
+                        } else {
+                          selectedMapType = MapType.normal;
+                        }
+                      });
+                    },
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    mini: true,
+                    child: const Icon(Icons.layers),
+                    heroTag: "layers",
+                  ),
+                if (widget.requiredGPS)
+                  FloatingActionButton(
+                    onPressed: _initCurrentLocation,
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    mini: true,
+                    child: const Icon(Icons.gps_fixed),
+                    heroTag: "layers",
+                  ),
+              ],
             ),
           ),
         ],
