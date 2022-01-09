@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_address_picker/models/location_result.dart';
@@ -98,18 +99,33 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
 
     return Scaffold(
       appBar: AppBar(
-        brightness: darkIcons ? Brightness.dark : Brightness.light,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness:
+              darkIcons ? Brightness.light : Brightness.dark,
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: Theme.of(context).iconTheme.copyWith(
               color: darkIcons ? Colors.white : null,
             ),
-        textTheme: Theme.of(context).textTheme.copyWith(
+        title: Text(widget.title ?? ""),
+        toolbarTextStyle: Theme.of(context)
+            .textTheme
+            .copyWith(
               headline6: TextStyle(
                 color: darkIcons ? null : Colors.black,
               ),
-            ),
-        title: Text(widget.title ?? ""),
+            )
+            .bodyText2,
+        titleTextStyle: Theme.of(context)
+            .textTheme
+            .copyWith(
+              headline6: TextStyle(
+                color: darkIcons ? null : Colors.black,
+              ),
+            )
+            .headline6,
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -183,7 +199,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                     materialTapTargetSize: MaterialTapTargetSize.padded,
                     mini: true,
                     child: const Icon(Icons.gps_fixed),
-                    heroTag: "layers",
+                    heroTag: "layers2",
                   ),
               ],
             ),
@@ -205,6 +221,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
   var dialogOpen;
 
   Future _checkGeolocationPermission() async {
+    await Geolocator.requestPermission();
     final geolocationStatus = await Geolocator.checkPermission();
     print("geolocationStatus = $geolocationStatus");
 
