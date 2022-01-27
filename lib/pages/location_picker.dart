@@ -148,6 +148,8 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
             },
             markers: _markers,
             onTap: (argument) {
+              _lastMapPosition = argument;
+
               setState(() {
                 _markers.add(Marker(
                   markerId: MarkerId("defaultMarker"),
@@ -156,6 +158,8 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
               });
             },
             onLongPress: (argument) {
+              _lastMapPosition = argument;
+
               setState(() {
                 _markers.add(Marker(
                   markerId: MarkerId("defaultMarker"),

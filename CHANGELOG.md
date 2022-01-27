@@ -1,3 +1,7 @@
+## 0.0.8
+
+* fixed incorrect location coordinates
+
 ## 0.0.5
 
 * updated dependencies
