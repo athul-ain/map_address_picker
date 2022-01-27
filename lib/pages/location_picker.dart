@@ -55,6 +55,9 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
     if (mounted && currentPosition != null)
       setState(() => _currentPosition = currentPosition);
     if (currentPosition != null || _currentPosition != null) {
+      _lastMapPosition = currentPosition == null
+          ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
+          : LatLng(currentPosition.latitude, currentPosition.longitude);
       setState(() {
         _markers.add(Marker(
           markerId: MarkerId("defaultMarker"),
