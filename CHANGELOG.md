@@ -1,3 +1,8 @@
+## 0.3.5
+
+* updated dependencies
+* set compileSdkVersion to 33
+
 ## 0.3.0
 
 * updated dependencies
